@@ -1,0 +1,104 @@
+﻿INSERT INTO Link Values
+(1, 1, 1, 6, 'https://1fichier.com/?3catzirwg36sl669gmun'),
+(1, 1, 2, 6, 'https://pixeldrain.com/u/WEoMJ6Vp'),
+(1, 1, 3, 6, 'https://mega.nz/file/dvNEmAYT#nzoitqb5Bu4eVkWV0FFGDqS-qEX88x7-hGJn18aIkG8')
+
+INSERT INTO Link Values
+(1, 2, 1 ,6, 'https://1fichier.com/?iavr4mbwejt9f4qvp4yf'),
+(1, 2, 2 ,6, 'https://pixeldrain.com/u/7pf8nVRR'),
+(1, 2, 3 ,6, 'https://mega.nz/file/BqcywQJZ#Hpi1PbJuo2AUFcLUMAtbTVFyO0Z0XoHGRlu-uxcowCs')
+
+
+INSERT INTO Link Values
+(1, 3, 2, 6, 'https://pixeldrain.com/u/4kHFVBdc'),
+(1, 3, 3, 6, 'https://mega.nz/file/QSFClCzD#zs3y6ch78MnpgBZJ5cY764AuQ9OEp_rcMhwy2YzQbx4'),
+(1, 3, 1, 6, 'https://1fichier.com/?o6ym1lbqypqma5kt8w5h'),
+(1, 3, 4, 6, 'https://send.cm/d8rfgcwelpwy')
+
+INSERT INTO Link Values
+(1, 4, 3, 6, 'https://mega.nz/file/wOcRgbKL#DH7U56WrON-FlBJQx-0s7bhrVF2mvdlCBrQ6yoO4Nhs'),
+(1, 4, 4, 6, 'https://send.cm/jmtv5ck5ee26'),
+(1, 4, 1, 6, 'https://1fichier.com/?0ffflei9eth795rikzn8'),
+(1, 4, 2, 6, 'https://pixeldrain.com/u/W1kjPaLU')
+
+INSERT INTO Link Values
+(1, 5, 3, 6, 'https://mega.nz/file/EeFTDDYT#EZOugSC3AaOfS2kF7IATThYRTdlgaQe-keJ544DrZH0'),
+(1, 5, 1, 6, 'https://1fichier.com/?djvrhc468yks9s7wu6ph'),
+(1, 5, 2, 6, 'https://pixeldrain.com/u/vBVKonkJ'),
+(1, 5, 4, 6, 'https://send.cm/097l5vrmbvmi')
+
+//
+
+INSERT INTO Link Values
+(1, 6, 3, 6, 'https://mega.nz/file/Uas1QIwA#W5231x2CEvYXhEmjgRrN6gPlNd4yrCwoBtEw27S2feA'),
+(1, 6, 1, 6, 'https://1fichier.com/?mwnovgycms2kjzm8zt7m'),
+(1, 6, 2, 6, 'https://pixeldrain.com/u/B91vxP8b')
+
+INSERT INTO Link Values
+(1, 7, 3, 6, 'https://mega.nz/file/1WFURbSI#LuiP3zD4sTvr3aeAt8pHXC0wVwkGTtafhg-kDpAT_6c'),
+(1, 7, 1, 6, 'https://1fichier.com/?jo5sdk1qdoyxaeuqfcbr'),
+(1, 7, 2, 6, 'https://pixeldrain.com/u/KwKFcNaQ'),
+(1, 7, 4, 6, 'https://send.cm/uw7dup48i6qg')
+
+
+INSERT INTO Link Values
+(1, 8, 3, 6, 'https://mega.nz/file/xL1E3CKZ#Rr3mrixMW07-5esP-xaesSP-krFAJfYanFw8X7qZ7Dk'),
+(1, 8, 1, 6, 'https://1fichier.com/?r5b6oewzfkakl4sfxmva'),
+(1, 8, 2, 6, 'https://pixeldrain.com/u/4enn2La9')
+
+INSERT INTO Link Values
+(1, 9, 4, 6, 'https://send.cm/91muyds98051'),
+(1, 9, 3, 6, 'https://mega.nz/file/oK8XURxA#sRAfRWoK4r6hsR1fF4-VAEtjg_b8GJ5zfD79w0RQuQ4'),
+(1, 9, 5, 6, 'https://gofile.io/d/rO0ErH'),
+(1, 9, 1, 6, 'https://1fichier.com/?lb6av2dqyhzvhguhf50m'),
+(1, 9, 2, 6, 'https://pixeldrain.com/u/NmPaVTQc'),
+
+
+INSERT INTO Link Values
+(1, 10, 4, 6, 'https://send.cm/w711oxemjrj3')
+(1, 10, 3, 6, 'https://mega.nz/file/JDdmjJyR#EI9YIdQSK4qdlgZDcRV0yjMSyLWh96SvnukiVBxLyGE'),
+(1, 10, 5, 6, 'https://gofile.io/d/NkOcRe'),
+(1, 10, 1, 6, 'https://1fichier.com/?wghqmki7sbn8bpwij15c'),
+(1, 10, 2, 6, 'https://pixeldrain.com/u/fb1U9qfj')
+
+INSERT INTO Link Values
+(1, 11, 4, 6, 'https://send.cm/53wctdvoxxpz'),
+(1, 11, 3, 6, 'https://mega.nz/file/NT0glKZI#8Ye_KSUe1qdwjQfiY5HCzSXEE49s7X7mCi8U1Lx0TFc'),
+(1, 11, 5, 6, 'https://gofile.io/d/3nAzSK'),
+(1, 11, 1, 6, 'https://1fichier.com/?9loc1tv1av82eowmk8wx'),
+(1, 11, 2, 6, 'https://pixeldrain.com/u/L9CeTRRb')
+
+INSERT INTO Link Values
+(1, 12, 1, 6, 'https://1fichier.com/?eoxq42lkekjzwlk4f468'),
+(1, 12, 2, 6, 'https://pixeldrain.com/u/ELcPeWnJ'),
+(1, 12, 4, 6, 'https://send.cm/gq97kks3a0o7'),
+(1, 12, 3, 6, 'https://mega.nz/file/FLkgzbBa#wGvs5bQOLJ6t-1VyaniGvFW_GcZ8D_G7jcQxee0yzUM'),
+(1, 12, 5, 6, 'https://gofile.io/d/DRgQu4')
+
+INSERT INTO Link Values
+(1, 13, 5, 6, 'https://gofile.io/d/QzvxPW'),
+(1, 13, 1, 6, 'https://1fichier.com/?26suhwqco1ebh5eaar1e'),
+(1, 13, 2, 6, 'https://pixeldrain.com/u/hiLruKm9'),
+(1, 13, 4, 6, 'https://send.cm/ciic32ig3jfg'),
+(1, 13, 3, 6, 'https://mega.nz/file/RHVVQTII#uRNXMcV3AeQV-rc2vXSeWfAjSfX2jFZ2mixG5ffqZZM')
+
+INSERT INTO Link Values
+(1, 14, 2, 6, 'https://pixeldrain.com/u/Gskiyvzt'),
+(1, 14, 4, 6, 'https://send.cm/8foj9s8rx7xc'),
+(1, 14, 3, 6, 'https://mega.nz/file/YSdykCJS#mvvoPvGoh0elQ6EGFwWrdZTeuEG8Bd8O0fRi345ELfw'),
+(1, 14, 5, 6, 'https://gofile.io/d/zTI8uJ'),
+(1, 14, 1, 6, 'https://1fichier.com/?us6895z6pj7aqovdhn0r')
+
+INSERT INTO Link Values
+(1, 15, 3, 6, 'https://mega.nz/file/1BxF2KwL#QZ0gR3tA3-FAsvLAy5mbUqoXAKqCGIxUBI_N0l1i_mk'),
+(1, 15, 1, 6, 'https://1fichier.com/?cab5y3wq0xgq1y7ux7xb'),
+(1, 15, 5, 6, 'https://gofile.io/d/9UEtiH'),
+(1, 15, 2, 6, 'https://pixeldrain.com/u/CRtr2uKs'),
+(1, 15, 4, 6, 'https://send.cm/vtsba1xh3gif')
+
+INSERT INTO Link Values
+(1, 16, 1, 6, 'https://1fichier.com/?6dxwvn8dg8vn34yjl7po'),
+(1, 16, 5, 6, 'https://gofile.io/d/ScdMFR'),
+(1, 16, 2, 6, 'https://pixeldrain.com/u/ywi4NZSB'),
+(1, 16, 3, 6, 'https://mega.nz/file/ICNnEQLC#tHOlIaYAkeZAAcIVitFZY_zvk0xK29ioNXIUtc3LMmI'),
+(1, 16, 4, 6, 'https://send.cm/w4im2llpbt3w')

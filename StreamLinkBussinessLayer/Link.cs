@@ -6,19 +6,31 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+// TODO: you have to solve the problem when a certain list of subtitles
+// is shared between two links (we should not load the same list twice,
+// we should instead reference the existing one)
+
 namespace StreamLinkBussinessLayer
 {
     public class Link
     {
+        // load all subs static right here, then when ever you create an insence of subs
+        // get sus for it from thee list ( ref)
+
+        private struct EpIdVideoNetwork
+        {
+            public int epId;
+            public int networkId;
+        }
+
+        private static Dictionary<EpIdVideoNetwork, List<Subtitles>> SubtitlesSets = new Dictionary<EpIdVideoNetwork, List<Subtitles>>();
         private enum LinkState { Creating, Editing }
         public int EpLinkId { get; private set; }
         public int EpId { get; set; }
         public Host LinkHost { get; set; }
         public VideoQuality LinkVideoQuality { get; set; }
+        public Network VideoNetwork { get; set; }
         public string Url { get; set; }
-
-        //private static LinkSubsMapper LinkSubtitlesMapper { get; set; } <-- performance enhancer, look at it later
-
         public List<Subtitles> LinkSubtitles { get; set; }
 
         private LinkState linkState;
@@ -33,20 +45,39 @@ namespace StreamLinkBussinessLayer
             linkState = LinkState.Creating;
         }
 
-        private Link(int epLinkId, int epId, int hostId, int qualityId, string url)
+        private Link(int epLinkId, int networkId, int epId, int hostId, int qualityId, string url)
         {
             EpLinkId = epLinkId;
             EpId = epId;
             LinkHost = Host.Get(hostId);
             LinkVideoQuality = VideoQuality.Get(qualityId);
+            VideoNetwork = Network.Get(networkId);
             Url = url;
-            LinkSubtitles = Subtitles.GetAll(EpLinkId);
+
+            // try find, found get it from dictionnay, if not load it from DB
+            EpIdVideoNetwork key = new EpIdVideoNetwork { epId = epId, networkId = networkId };
+
+            if (SubtitlesSets.ContainsKey(key))
+            {
+                LinkSubtitles = SubtitlesSets[key];
+
+                //if(object.ReferenceEquals(LinkSubtitles, SubtitlesSets[key]))
+                //{
+                //    Console.WriteLine("true");
+                //}
+            }
+            else
+            {
+                LinkSubtitles = Subtitles.GetAll(EpLinkId);
+                SubtitlesSets.Add(key, LinkSubtitles);
+            }
+
             linkState = LinkState.Editing;
         }
 
         public override string ToString()
         {
-            return $"EpLinkId = {EpLinkId}, EpId = {EpId}, HostId = {LinkHost.HostId}, QualityId = {LinkVideoQuality.QualityId}, Url = {Url}";
+            return $"EpLinkId = {EpLinkId}, NetworkName = {VideoNetwork.NetworkName}, EpId = {EpId}, Host = {LinkHost.HostName}, Quality = {LinkVideoQuality.QualityName}, URL = {Url}";
         }
 
         // Add a get one link one link when you figure it out
@@ -61,6 +92,7 @@ namespace StreamLinkBussinessLayer
             {
                 linksList.Add(new Link(
                     (int)anonymousLink.GetType().GetProperty("EpLinkId").GetValue(anonymousLink),
+                    (int)anonymousLink.GetType().GetProperty("NetworkId").GetValue(anonymousLink),
                     (int)anonymousLink.GetType().GetProperty("EpId").GetValue(anonymousLink),
                     (int)anonymousLink.GetType().GetProperty("HostId").GetValue(anonymousLink),
                     (int)anonymousLink.GetType().GetProperty("QualityId").GetValue(anonymousLink),

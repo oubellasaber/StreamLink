@@ -29,6 +29,7 @@ namespace StreamLinkDataAccessLayer
                             var link = new
                             {
                                 EpLinkId = (int)reader["EpLinkId"],
+                                NetworkId = (int)reader["NetworkId"],
                                 EpId = (int)reader["EpId"],
                                 HostId = (int)reader["HostId"],
                                 QualityId = (int)reader["QualityId"],
@@ -40,13 +41,13 @@ namespace StreamLinkDataAccessLayer
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(ex.StackTrace);
                 }
             }
             return links;
         }
 
-        // Contributors
+        // Contributors - (Link extractoes - admins)
 
         public static int Add(int epId, int hostId, int qualityId, string url)
         {
@@ -75,7 +76,7 @@ namespace StreamLinkDataAccessLayer
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(ex.StackTrace);
                 }
             }
 
@@ -110,7 +111,7 @@ namespace StreamLinkDataAccessLayer
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(ex.StackTrace);
                 }
             }
 
@@ -136,7 +137,7 @@ namespace StreamLinkDataAccessLayer
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(ex.StackTrace);
                 }
             }
 

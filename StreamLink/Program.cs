@@ -159,19 +159,17 @@ namespace StreamLink
         static int Main(string[] args)
         {
             long intial = GC.GetTotalMemory(true);
-            Serie serie = Serie.Get(1, Serie.enEpsLoadType.InRange, 1, 4);
+            Serie serie = Serie.Get(1, Serie.enEpsLoadType.All);
 
             if (serie != null)
             {
-                Console.WriteLine(serie.ToString());
+                Console.WriteLine(serie.ToString() + '\n');
                 foreach (Ep ep in serie.Eps)
                 {
                     Console.WriteLine(ep.ToString());
                     foreach(Link link in  ep.Links)
                     {
-                        Console.WriteLine(link);
-                        Console.WriteLine(link.LinkHost.ToString());
-                        Console.WriteLine(link.LinkVideoQuality.ToString());
+                        Console.WriteLine(link.Url);
 
                         if(link.LinkSubtitles != null)
                         {
@@ -180,8 +178,9 @@ namespace StreamLink
                                 Console.WriteLine(subs.ToString());
                             }
                         }
+                        Console.WriteLine();
                     }
-                    Console.WriteLine();
+                    Console.Write("\n\n");
                 }
             }
 

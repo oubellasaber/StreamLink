@@ -7,27 +7,28 @@ using System.Threading.Tasks;
 
 namespace StreamLinkDataAccessLayer
 {
-    public class VideoQualityDA
+    public class NetworkDA
     {
-        public static bool Get(int qualityId, ref string qualityName)
+        public static bool Get(int networkId, ref string networkName, ref string websiteLink)
         {
             bool isFound = false;
             using (SqlConnection conn = new SqlConnection(DataAccessSettings.ConnectionString))
             {
-                string query = @"SELECT QualityName FROM VideoQuality WHERE QualityId = @QualityId;";
+                string query = @"SELECT * FROM Network WHERE NetworkId = @NetworkId;";
                 SqlCommand cmd = new SqlCommand(query, conn);
 
                 try
                 {
                     conn.Open();
-                    cmd.Parameters.AddWithValue("@QualityId", qualityId);
-    
-                    object result = cmd.ExecuteScalar();
+                    cmd.Parameters.AddWithValue("@NetworkId", networkId);
 
-                    if(result != null)
+                    using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        isFound = true;
-                        qualityName = (string)result;
+                        if (isFound = reader.Read())
+                        {
+                            networkName = (string)reader["NetworkName"];
+                            websiteLink = (string)reader["WebsiteLink"];
+                        }
                     }
                 }
                 catch (Exception ex)

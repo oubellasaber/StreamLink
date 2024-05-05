@@ -44,8 +44,11 @@
     <Compile Include="Ep.cs" />
     <Compile Include="Host.cs" />
     <Compile Include="Link.cs" />
+    <Compile Include="MKVDramaLinkExtractor.cs" />
+    <Compile Include="Network.cs" />
     <Compile Include="Serie.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SubsLang.cs" />
     <Compile Include="Subtitles.cs" />
     <Compile Include="VideoQuality.cs" />
   </ItemGroup>
@@ -54,6 +57,9 @@
       <Project>{35296ed2-5acc-41b9-a72a-6ce035ba6e4a}</Project>
       <Name>StreamLinkDataAccessLayer</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ep.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

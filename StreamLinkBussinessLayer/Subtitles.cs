@@ -10,9 +10,7 @@ namespace StreamLinkBussinessLayer
     {
         private enum enSubtitlesState { Creating, Editing }
         public int SubsId { get; private set; }
-
-        // seperate entity for this one
-        public int SubsLangId { get; set; }
+        public SubsLang SubsLanguage { get; set; }
         public string Url { get; set; }
 
         private enSubtitlesState SubtitlesState;
@@ -22,14 +20,14 @@ namespace StreamLinkBussinessLayer
         private Subtitles(int subsId, int subsLangId, string url)
         {
             SubsId = subsId;
-            SubsLangId = subsLangId;
+            SubsLanguage = SubsLang.Get(subsLangId);
             Url = url;
             SubtitlesState = enSubtitlesState.Editing;
         }
 
         public override string ToString()
         {
-            return $"SubsId: {SubsId}, SubsLangId: {SubsLangId}, Url: {Url}";
+            return $"SubsId: {SubsId}, Language: {SubsLanguage.Language}, Url: {Url}";
         }
 
         private static List<Subtitles> ConvertToSubtitlesList(List<object> anonymousSubtitles)

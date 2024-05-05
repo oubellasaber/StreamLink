@@ -15,8 +15,8 @@ namespace StreamLinkDataAccessLayer
 
             using (SqlConnection conn = new SqlConnection(DataAccessSettings.ConnectionString))
             {
-                string query = @"SELECT lsm.SubsId, s.SubsLangId, s.URL from Subtitles s
-                                 LEFT JOIN LinkSubsMapper lsm on lsm.SubsId = s.SubsId
+                string query = @"SELECT ls.SubsId, s.SubsLangId, s.URL from Subtitles s
+                                 LEFT JOIN LinkSubs ls on ls.SubsId = s.SubsId
                                  where EpLinkId = @EpLinkId;";
                 SqlCommand cmd = new SqlCommand(query, conn);
 
@@ -41,7 +41,7 @@ namespace StreamLinkDataAccessLayer
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(ex.StackTrace);
                 }
             }
             return subtitlesList;

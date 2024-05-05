@@ -45,7 +45,7 @@ namespace StreamLinkBussinessLayer
 
         public override string ToString()
         {
-            return $"SerieId: {SerieId}, Title: {Title}, Total Episodes: {TotalEps}, Uploaded Episodes: {UploadedEps}, State: {SerieState}";
+            return $"SerieId: {SerieId}, Title: {Title}, Total Episodes: {TotalEps}, Uploaded Episodes: {UploadedEps}";
         }
 
         private List<Ep> LoadSerieEps(enEpsLoadType loadType, int from, int to)

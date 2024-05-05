@@ -45,8 +45,10 @@
     <Compile Include="EpDA.cs" />
     <Compile Include="HostDA.cs" />
     <Compile Include="LinkDA.cs" />
+    <Compile Include="NetworkDA.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SerieDA.cs" />
+    <Compile Include="SubsLangDA.cs" />
     <Compile Include="SubtitlesDA.cs" />
     <Compile Include="VideoQualityDA.cs" />
   </ItemGroup>
