@@ -1,0 +1,3 @@
+﻿we should follow the style MS follow for naming private variables --> Done
+
+delete methods should be revided (delete not just entity but also new columns that entity made)

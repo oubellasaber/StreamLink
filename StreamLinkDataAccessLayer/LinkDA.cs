@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpenQA.Selenium.DevTools;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -8,9 +9,9 @@ namespace StreamLinkDataAccessLayer
 {
     public static class LinkDA
     {
-        public static List<object> GetAll(int epId)
+        public static DataTable GetAll(int epId)
         {
-            List<object> links = new List<object>();
+            DataTable dt = new DataTable();
 
             using (SqlConnection conn = new SqlConnection(DataAccessSettings.ConnectionString))
             {
@@ -26,16 +27,7 @@ namespace StreamLinkDataAccessLayer
                     {
                         while (reader.Read())
                         {
-                            var link = new
-                            {
-                                EpLinkId = (int)reader["EpLinkId"],
-                                NetworkId = (int)reader["NetworkId"],
-                                EpId = (int)reader["EpId"],
-                                HostId = (int)reader["HostId"],
-                                QualityId = (int)reader["QualityId"],
-                                Url = (string)reader["URL"]
-                            };
-                            links.Add(link);
+                            dt.Load(reader);
                         }
                     }
                 }
@@ -44,18 +36,15 @@ namespace StreamLinkDataAccessLayer
                     Console.WriteLine(ex.StackTrace);
                 }
             }
-            return links;
+            return dt;
         }
-
-        // Contributors - (Link extractoes - admins)
-
-        public static int Add(int epId, int hostId, int qualityId, string url)
+        public static int Add(int epId, int networkId, int sourceId, int hostId, int qualityId, string url)
         {
             int epLinkId = -1;
             using (SqlConnection conn = new SqlConnection(DataAccessSettings.ConnectionString))
             {
-                string query = @"INSERT INTO Link(EpId, HostId, QualityId, URL)
-                                 VALUES(@EpId, @HostId, @QualityId, @URL)
+                string query = @"INSERT INTO Link(EpId, NetworkId, SourceId, HostId, QualityId, URL)
+                                 VALUES(@EpId, @NetworkId, @SourceId, @HostId, @QualityId, @URL)
                                  SELECT SCOPE_IDENTITY();";
                 SqlCommand cmd = new SqlCommand(query, conn);
 
@@ -63,6 +52,8 @@ namespace StreamLinkDataAccessLayer
                 {
                     conn.Open();
                     cmd.Parameters.AddWithValue("@EpId", epId);
+                    cmd.Parameters.AddWithValue("@NetworkId", networkId);
+                    cmd.Parameters.AddWithValue("@SourceId", sourceId);
                     cmd.Parameters.AddWithValue("@HostId", hostId);
                     cmd.Parameters.AddWithValue("@QualityId", qualityId);
                     cmd.Parameters.AddWithValue("@URL", url);
@@ -82,17 +73,18 @@ namespace StreamLinkDataAccessLayer
 
             return epLinkId;
         }
-
-        public static bool Update(int epLinkId, int epId, int hostId, int qualityId, string url)
+        public static bool Update(int epLinkId, int epId, int networkId, int sourceId, int hostId, int qualityId, string url)
         {
             int rowsAffected = 0;
             using (SqlConnection conn = new SqlConnection(DataAccessSettings.ConnectionString))
             {
                 string query = @"UPDATE Link
                                  SET EpId = @EpId,
+                                     NetworkId = @NetworkId,
+                                     SourceId = @SourceId,
                                      HostId = @HostId,
                                      QualityId = @QualityId,
-                                     URL = @URL
+                                     URL = @Url
                                  WHERE EpLinkId = @EpLinkId;";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
@@ -102,6 +94,8 @@ namespace StreamLinkDataAccessLayer
                     conn.Open();
                     cmd.Parameters.AddWithValue("@EpLinkId", epLinkId);
                     cmd.Parameters.AddWithValue("@EpId", epId);
+                    cmd.Parameters.AddWithValue("@NetworkId", networkId);
+                    cmd.Parameters.AddWithValue("@SourceId", sourceId);
                     cmd.Parameters.AddWithValue("@HostId", hostId);
                     cmd.Parameters.AddWithValue("@QualityId", qualityId);
                     cmd.Parameters.AddWithValue("@URL", url);
@@ -111,13 +105,12 @@ namespace StreamLinkDataAccessLayer
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.StackTrace);
+                    Console.WriteLine(ex.Message);
                 }
             }
 
             return rowsAffected > 0;
         }
-
         public static bool Delete(int epLinkId)
         {
             int rowsAffected = 0;

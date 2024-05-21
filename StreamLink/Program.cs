@@ -1,200 +1,105 @@
-﻿using StreamLinkBussinessLayer;
+﻿using OpenQA.Selenium;
+using StreamLinkBussinessLayer;
 using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
+using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 
 namespace StreamLink
 {
-    internal class Program
+    public class Program
     {
-        public static void PrintSerieInfo(Serie serie)
+        public static Session ReadSessionFromFile(string fileName)
         {
-            Console.WriteLine($"Serie Name: {serie.Title}");
-            Console.WriteLine($"Serie Total Eps: {serie.TotalEps}");
-            Console.WriteLine($"Serie Uploaded Eps: {serie.UploadedEps}");
-        }
-        public static void TestGetSerie(int serieId)
-        {
-            Serie serie = Serie.Get(serieId, Serie.enEpsLoadType.All);
-
-            if (serie != null)
+            Session session = null;
+            try
             {
-                Console.WriteLine("Serie retrieved successfully.");
-                PrintSerieInfo(serie);
-            }
-            else
-            {
-                Console.WriteLine("Failed to retrieve the serie.");
-            }
-        }
-
-        public static void TestAddSerie()
-        {
-            Serie serie = new Serie("Itaewon Class", 16, 16);
-
-            if(serie.Save())
-            {
-                Console.WriteLine("Serie added successfully.");
-                PrintSerieInfo(serie);
-            }
-            else
-            {
-                Console.WriteLine("Failed to add the serie.");
-            }
-        }
-
-        public static void TestUpdateSerie(int serieId)
-        {
-            Serie serie = Serie.Get(serieId, Serie.enEpsLoadType.All);
-
-            if(serie != null)
-            {
-                serie.Title = "Queen of Tears";
-
-                if (serie.Save())
+                using (var reader = new StreamReader(fileName))
                 {
-                    Console.WriteLine("Serie updated successfully.");
-                    PrintSerieInfo(serie);
-                }
-                else
-                {
-                    Console.WriteLine("Failed to update the serie.");
+                    string line;
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        string[] values = line.Split(',');
+
+                        session = Session.Get(values[0]);
+                    }
                 }
             }
-            else
+            catch (Exception ex)
             {
-                Console.WriteLine($"Failed to retrieve the serie with id {serieId}. (NOT FOUND)");
+                Console.WriteLine($"Error reading CSV file: {ex.Message}");
             }
+
+            return session;
         }
 
-        public static void TestDeleteSerie(int serieId)
+        public static void WriteSessionToFile(string fileName, string sessionId)
         {
-            if (Serie.Delete(serieId))
+            try
             {
-                Console.WriteLine("Serie deleted successfully.");
-            }
-            else
-            {
-                Console.WriteLine("Failed to delete the serie.");
-            }
-        }
-
-        public static void PrintEpInfo(Ep ep)
-        {
-            Console.WriteLine($"Episode Number: {ep.EpNum}");
-            Console.WriteLine($"Serie Id: {ep.SerieId}");
-        }
-
-        public static void TestGetEp(int epId)
-        {
-            Ep ep = Ep.Get(epId);
-
-            if (ep != null)
-            {
-                Console.WriteLine("Episode retrieved successfully.");
-                PrintEpInfo(ep);
-            }
-            else
-            {
-                Console.WriteLine("Failed to retrieve the episode.");
-            }
-        }
-
-        public static void TestAddEp(int serieId)
-        {
-            Ep ep = new Ep(10, serieId);
-
-            if (ep.Save())
-            {
-                Console.WriteLine("Episode added successfully.");
-                PrintEpInfo(ep);
-            }
-            else
-            {
-                Console.WriteLine("Failed to add the episode.");
-            }
-        }
-
-        public static void TestUpdateEp(int epId)
-        {
-            Ep ep = Ep.Get(epId);
-
-            if (ep != null)
-            {
-                ep.EpNum = 11;
-
-                if (ep.Save())
+                using (var writer = new StreamWriter(fileName))
                 {
-                    Console.WriteLine("Episode updated successfully.");
-                    PrintEpInfo(ep);
-                }
-                else
-                {
-                    Console.WriteLine("Failed to update the episode.");
+                    writer.WriteLine(sessionId);
                 }
             }
-            else
+            catch (Exception ex)
             {
-                Console.WriteLine($"Failed to retrieve the episode with id {epId}. (NOT FOUND)");
+                Console.WriteLine($"Error writing CSV file: {ex.Message}");
             }
         }
 
-        public static void TestDeleteEp(int epId)
+        public static void CreateSession(int userId)
         {
-            if (Ep.Delete(epId))
+            Session session = new Session(userId);
+
+            if(session.Save())
             {
-                Console.WriteLine("Episode deleted successfully.");
+                WriteSessionToFile("session.csv", session.SessionId);
+            }
+        }
+        public static void Login()
+        {
+            Session session = null;
+            User user = null;
+
+            if ((session = ReadSessionFromFile("session.csv")) != null)
+            {
+                user = User.Get(session.UserId);
+                Console.WriteLine(user.ToString());
+
+                return;
+            }
+
+            string username = String.Empty;
+            string password = String.Empty;
+
+            Console.WriteLine("Enter username: ");
+            username = Console.ReadLine();
+
+            Console.WriteLine("Enter password: ");
+            password = Console.ReadLine();
+
+            if((user = User.IsCorrectCredentials(username, password)) != null)
+            {
+                CreateSession(user.UserId);
+                Console.WriteLine(user.ToString());
+
             }
             else
             {
-                Console.WriteLine("Failed to delete the episode.");
+                Console.WriteLine("Wrong credentials");
             }
         }
-
         static int Main(string[] args)
         {
-            long intial = GC.GetTotalMemory(true);
-            Serie serie = Serie.Get(1, Serie.enEpsLoadType.All);
+            Login();
 
-            if (serie != null)
-            {
-                Console.WriteLine(serie.ToString() + '\n');
-                foreach (Ep ep in serie.Eps)
-                {
-                    Console.WriteLine(ep.ToString());
-                    foreach(Link link in  ep.Links)
-                    {
-                        Console.WriteLine(link.Url);
+            Source src = Source.Get(1);
 
-                        if(link.LinkSubtitles != null)
-                        {
-                            foreach (Subtitles subs in link.LinkSubtitles)
-                            {
-                                Console.WriteLine(subs.ToString());
-                            }
-                        }
-                        Console.WriteLine();
-                    }
-                    Console.Write("\n\n");
-                }
-            }
-
-            Console.WriteLine((GC.GetTotalMemory(true) - intial) / Math.Pow(1024, 2));
-
-
-
-
-            // TestGetSerie(2); //Worked
-            // TestAddSerie(); // Worked
-            // TestUpdateSerie(2); // Worked
-            // TestDeleteSerie(2); // Worked
+            src.Save();
 
             return 0;
         }
     }
 }
+ 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,19 +9,23 @@ namespace StreamLinkBussinessLayer
 {
     public class VideoQuality
     {
-        private enum enQualityState { Creating, Editing }
         public int QualityId { get; private set; }
         public string QualityName { get; set; }
 
-        private enQualityState QualityState;
+        private Enums.ObjectState _qualityState;
 
-        // add CRUD operations later if needed
+        public VideoQuality(string qualityName)
+        {
+            QualityId = -1;
+            QualityName = qualityName;
+            _qualityState = Enums.ObjectState.Creating;
+        }
 
         private VideoQuality(int qualityId, string qualityName)
         {
             QualityId = qualityId;
             QualityName = qualityName;
-            QualityState = enQualityState.Editing;
+            _qualityState = Enums.ObjectState.Editing;
         }
 
         public override string ToString()
@@ -38,6 +43,49 @@ namespace StreamLinkBussinessLayer
             }
 
             return null;
+        }
+
+        public static DataTable GetAll()
+        {
+            return StreamLinkDataAccessLayer.VideoQualityDA.GetAll();
+        }
+
+        private bool _Add()
+        {
+            QualityId = StreamLinkDataAccessLayer.VideoQualityDA.Add(QualityName);
+            return (QualityId != -1);
+        }
+
+        private bool _Update()
+        {
+            return StreamLinkDataAccessLayer.VideoQualityDA.Update(QualityId, QualityName);
+
+        }
+
+        public bool Save()
+        {
+            bool isSaved = false;
+
+            switch (_qualityState)
+            {
+                case Enums.ObjectState.Creating:
+                    if (isSaved = this._Add())
+                    {
+                        _qualityState = Enums.ObjectState.Editing;
+                    }
+                    break;
+
+                case Enums.ObjectState.Editing:
+                    isSaved = this._Update();
+                    break;
+            }
+
+            return isSaved;
+        }
+
+        public static bool Delete(int qualityId)
+        {
+            return StreamLinkDataAccessLayer.VideoQualityDA.Delete(qualityId);
         }
     }
 }

@@ -13,16 +13,14 @@ namespace StreamLinkBussinessLayer
 {
     public class Serie
     {
-        public enum enEpsLoadType { None, All, InRange }
-        private enum enSerieState { Creating, Editing }
-        public int SerieId { get; private set; }
+        public enum EpsLoadType { None, All, InRange }
+        public int SerieId { get; private set; }    
         public string Title { get; set; }
         public int TotalEps { get; set; }
         public int UploadedEps { get; set; }
         public List<Ep> Eps { get; private set; }
-
-        private enSerieState SerieState;
-        public enEpsLoadType LoadType { get; private set; }
+        public EpsLoadType LoadType { get; private set; }
+        private Enums.ObjectState _serieState;
 
         public Serie(string title, int totalEps, int uploadedEps)
         {
@@ -30,15 +28,16 @@ namespace StreamLinkBussinessLayer
             Title = title;
             TotalEps = totalEps;
             UploadedEps = uploadedEps;
-            SerieState = enSerieState.Creating;
+            _serieState = Enums.ObjectState.Creating;
         }
-        private Serie(int serieId, string title, int totalEps, int uploadedEps, enEpsLoadType loadType, int from, int to)
+
+        private Serie(int serieId, string title, int totalEps, int uploadedEps, EpsLoadType loadType, int from, int to)
         {
             SerieId = serieId;
             Title = title;
             TotalEps = totalEps;
             UploadedEps = uploadedEps;
-            SerieState = enSerieState.Editing;
+            _serieState = Enums.ObjectState.Editing;
             LoadType = loadType;
             Eps = LoadSerieEps(loadType, from, to);
         }
@@ -48,19 +47,19 @@ namespace StreamLinkBussinessLayer
             return $"SerieId: {SerieId}, Title: {Title}, Total Episodes: {TotalEps}, Uploaded Episodes: {UploadedEps}";
         }
 
-        private List<Ep> LoadSerieEps(enEpsLoadType loadType, int from, int to)
+        private List<Ep> LoadSerieEps(EpsLoadType loadType, int from, int to)
         {
             List<Ep> epsList = null;
             switch(loadType)
             {
-                case enEpsLoadType.None:
+                case EpsLoadType.None:
                     break;
 
-                case enEpsLoadType.All:
+                case EpsLoadType.All:
                     epsList = Ep.GetInRange(SerieId, 1, UploadedEps);
                     break;
 
-                case enEpsLoadType.InRange:
+                case EpsLoadType.InRange:
                     if(IsOverlaping(UploadedEps, ref from, ref to))
                     {
                         epsList = Ep.GetInRange(SerieId, from, to);
@@ -80,7 +79,7 @@ namespace StreamLinkBussinessLayer
         }
 
         // need to be configured to handle getting only one episode
-        public static Serie Get(int serieId, enEpsLoadType loadType = enEpsLoadType.None, int from = 1, int to = 20)
+        public static Serie Get(int serieId, EpsLoadType loadType = EpsLoadType.None, int from = 1, int to = 20)
         {
             string title = string.Empty;
             int totalEps = 0;
@@ -93,41 +92,58 @@ namespace StreamLinkBussinessLayer
 
             return null;
         }
-
-        // TODO: Give (Create,  Update, Delete) permessions only to admins and mods
+        
         private bool _Add()
         {
-            SerieId = StreamLinkDataAccessLayer.SerieDA.Add(SerieId, Title, TotalEps, UploadedEps);
+            if (Role.IsRoleAuthorized(Enums.Permissions.DeleteRole))
+            {
+                SerieId = StreamLinkDataAccessLayer.SerieDA.Add(SerieId, Title, TotalEps, UploadedEps);
 
-            return (SerieId != -1);
+                return (SerieId != -1);
+            }
+
+            return false;
         }
+        
         private bool _Update()
         {
-            return StreamLinkDataAccessLayer.SerieDA.Update(SerieId, Title, TotalEps, UploadedEps);
+            if (Role.IsRoleAuthorized(Enums.Permissions.DeleteRole))
+            {
+                return StreamLinkDataAccessLayer.SerieDA.Update(SerieId, Title, TotalEps, UploadedEps);
+            }
+
+            return false;
         }
+        
         public bool Save()
         {
             bool isSaved = false;
 
-            switch(SerieState)
+            switch(_serieState)
             {
-                case enSerieState.Creating:
+                case Enums.ObjectState.Creating:
                     if (isSaved = this._Add())
                     {
-                        SerieState = enSerieState.Editing;
+                        _serieState = Enums.ObjectState.Editing;
                     }
                     break;
 
-                case enSerieState.Editing:
+                case Enums.ObjectState.Editing:
                     isSaved = this._Update();
                     break;
             }
 
             return isSaved;
         }
+        
         public static bool Delete(int serieId)
         {
-            return StreamLinkDataAccessLayer.SerieDA.Delete(serieId);
+            if (Role.IsRoleAuthorized(Enums.Permissions.DeleteRole))
+            {
+                return StreamLinkDataAccessLayer.SerieDA.Delete(serieId);
+            }
+
+            return false;
         }
     }
 }

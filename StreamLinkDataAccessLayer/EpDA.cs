@@ -41,9 +41,9 @@ namespace StreamLinkDataAccessLayer
             return isFound;
         }
 
-        public static List<object> GetInRange(int serieId, int from, int to)
+        public static DataTable GetInRange(int serieId, int from, int to)
         {
-            List<object> eps = new List<object>();
+            DataTable dt = new DataTable();
 
             using (SqlConnection connection = new SqlConnection(DataAccessSettings.ConnectionString))
             {
@@ -59,14 +59,7 @@ namespace StreamLinkDataAccessLayer
                     {
                         while (reader.Read())
                         {
-                            var ep = new
-                            {
-                                EpId = (int)reader["EpId"],
-                                EpNum = (int)reader["EpNum"],
-                                SerieId = (int)reader["SerieId"]
-                            };
-
-                            eps.Add(ep);
+                            dt.Load(reader);
                         }
                     }
                 }
@@ -76,7 +69,7 @@ namespace StreamLinkDataAccessLayer
                 }
             }
 
-            return eps;
+            return dt;
         }
 
         public static int Add(int epNum, int serieId)

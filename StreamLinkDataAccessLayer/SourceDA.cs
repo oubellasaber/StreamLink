@@ -1,39 +1,36 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StreamLinkDataAccessLayer
 {
-    public class VideoQualityDA
+    public class SourceDA
     {
-        public static bool Get(int qualityId, ref string qualityName)
+        public static bool Get(int sourceId, ref string sourceName, ref string sourceDescription)
         {
             bool isFound = false;
             using (SqlConnection conn = new SqlConnection(DataAccessSettings.ConnectionString))
             {
-                string query = @"SELECT QualityName FROM VideoQuality WHERE QualityId = @QualityId;";
+                string query = @"SELECT * FROM Source WHERE SourceId = @SourceId;";
                 SqlCommand cmd = new SqlCommand(query, conn);
 
                 try
                 {
                     conn.Open();
-                    cmd.Parameters.AddWithValue("@QualityId", qualityId);
-    
-                    object result = cmd.ExecuteScalar();
+                    cmd.Parameters.AddWithValue("@SourceId", sourceId);
 
-                    if(result != null)
+                    using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        isFound = true;
-                        qualityName = (string)result;
+                        if (isFound = reader.Read())
+                        {
+                            sourceName = (string)reader["SourceName"];
+                            sourceDescription = (string)reader["SourceDescription"];
+                        }
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(ex.StackTrace);
                 }
             }
 
@@ -45,7 +42,7 @@ namespace StreamLinkDataAccessLayer
             DataTable dt = new DataTable();
             using (SqlConnection conn = new SqlConnection(DataAccessSettings.ConnectionString))
             {
-                string query = @"SELECT * FROM VideoQuality";
+                string query = @"SELECT * FROM Source";
                 SqlCommand cmd = new SqlCommand(query, conn);
 
                 try
@@ -59,60 +56,63 @@ namespace StreamLinkDataAccessLayer
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(ex.StackTrace);
                 }
             }
 
             return dt;
         }
 
-        public static int Add(string qualityName)
+        public static int Add(string sourceName, string sourceDescription)
         {
-            int qualityId = -1;
+            int sourceId = -1;
             using (SqlConnection conn = new SqlConnection(DataAccessSettings.ConnectionString))
             {
-                string query = @"INSERT INTO VideoQuality(QualityName)
-                                 VALUES(@QualityName)
+                string query = @"INSERT INTO Source(SourceName, SourceDescription)
+                                 VALUES(@SourceName, @SourceDescription)
                                  SELECT SCOPE_IDENTITY();";
                 SqlCommand cmd = new SqlCommand(query, conn);
 
                 try
                 {
                     conn.Open();
-                    cmd.Parameters.AddWithValue("@QualityName", qualityName);
+                    cmd.Parameters.AddWithValue("@SourceName", sourceName);
+                    cmd.Parameters.AddWithValue("@SourceDescription", sourceDescription);
 
                     object insertedRowId = cmd.ExecuteScalar();
 
                     if (insertedRowId != null && int.TryParse(insertedRowId.ToString(), out int result))
                     {
-                        qualityId = result;
+                        sourceId = result;
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(ex.StackTrace);
                 }
             }
 
-            return qualityId;
+            return sourceId;
         }
 
-        public static bool Update(int qualityId, string qualityName)
+        public static bool Update(int sourceId, string sourceName, string sourceDescription)
         {
             int rowsAffected = 0;
             using (SqlConnection conn = new SqlConnection(DataAccessSettings.ConnectionString))
             {
-                string query = @"UPDATE VideoQuality
-                                 SET QualityName = @QualityName
-                                 WHERE QualityId = @QualityId;";
+                string query = @"UPDATE Source
+                                 SET SourceName = @SourceName,
+                                     SourceDescription = @SourceDescription
+                                 WHERE SourceId = @SourceId;";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
 
                 try
                 {
                     conn.Open();
-                    cmd.Parameters.AddWithValue("@QualityId", qualityId);
-                    cmd.Parameters.AddWithValue("@QualityName", qualityName);
+                    cmd.Parameters.AddWithValue("@SourceId", sourceId);
+                    cmd.Parameters.AddWithValue("@SourceName", sourceName);
+                    cmd.Parameters.AddWithValue("@SourceDescription", sourceDescription);
 
                     rowsAffected = cmd.ExecuteNonQuery();
                 }
@@ -125,19 +125,19 @@ namespace StreamLinkDataAccessLayer
             return rowsAffected > 0;
         }
 
-        public static bool Delete(int qualityId)
+        public static bool Delete(int sourceId)
         {
             int rowsAffected = 0;
             using (SqlConnection conn = new SqlConnection(DataAccessSettings.ConnectionString))
             {
-                string query = @"DELETE FROM VideoQuality WHERE QualityId = @QualityId;";
+                string query = @"DELETE FROM Role WHERE SourceId = @SourceId;";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
 
                 try
                 {
                     conn.Open();
-                    cmd.Parameters.AddWithValue("@QualityId", qualityId);
+                    cmd.Parameters.AddWithValue("@SourceId", sourceId);
 
                     rowsAffected = cmd.ExecuteNonQuery();
 

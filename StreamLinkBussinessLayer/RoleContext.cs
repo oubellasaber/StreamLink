@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace StreamLinkBussinessLayer
 {
-    internal class MKVDramaLinkExtractor
+    public static class RoleContext
     {
+        public static Role CurrentRole { get; set; }
     }
 }

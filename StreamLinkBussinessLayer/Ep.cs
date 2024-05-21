@@ -12,30 +12,28 @@ namespace StreamLinkBussinessLayer
 {
     public class Ep
     {
-        public enum enLinksLoadType { None, All }
-        private enum enEpState { Creating, Editing }
+        public enum LinksLoadType { None, All }
         public int EpId { get; private set; }
         public int EpNum { get; set; }
         public int SerieId { get; set; }
         public List<Link> Links { get; private set; }
-
-        private enEpState EpState;
-        public enLinksLoadType LoadType { get; private set; }
+        public LinksLoadType LoadType { get; private set; }
+        private Enums.ObjectState _epState;
 
         public Ep(int epNum, int serieId)
         {
             EpId = -1;
             EpNum = epNum;
             SerieId = serieId;
-            EpState = enEpState.Creating;
+            _epState = Enums.ObjectState.Creating;
         }
-
-        private Ep(int epId, int epNum, int serieId, enLinksLoadType loadType = enLinksLoadType.All)
+        
+        private Ep(int epId, int epNum, int serieId, LinksLoadType loadType = LinksLoadType.All)
         {
             EpId = epId;
             EpNum = epNum;
             SerieId = serieId;
-            EpState = enEpState.Editing;
+            _epState = Enums.ObjectState.Editing;
             LoadType = loadType;
             Links = LoadEpLinks(loadType);
         }
@@ -57,17 +55,15 @@ namespace StreamLinkBussinessLayer
         {
             return $"EpId: {EpId}, EpNum: {EpNum}, SerieId: {SerieId}";
         }
-
-
-        private List<Link> LoadEpLinks(enLinksLoadType loadType)
+        private List<Link> LoadEpLinks(LinksLoadType loadType)
         {
             List<Link> linksList = null;
             switch (loadType)
             {
-                case enLinksLoadType.None:
+                case LinksLoadType.None:
                     break;
 
-                case enLinksLoadType.All:
+                case LinksLoadType.All:
                     // Add parameters when you get how eps works
                     linksList = Link.GetAll(EpId);
                     break;
@@ -76,28 +72,20 @@ namespace StreamLinkBussinessLayer
             return linksList;
         }
 
-
-        // full links, partial links
-        private static List<Ep> ConvertToEpsList(List<object> anonymousEps)
-        {
-            List<Ep> epsList = new List<Ep>();
-
-            foreach (var anonymousEp in anonymousEps)
-            {
-                epsList.Add(new Ep(
-                    (int)anonymousEp.GetType().GetProperty("EpId").GetValue(anonymousEp),
-                    (int)anonymousEp.GetType().GetProperty("EpNum").GetValue(anonymousEp),
-                    (int)anonymousEp.GetType().GetProperty("SerieId").GetValue(anonymousEp)
-                    ));
-            }
-
-            return epsList;
-        }
-
         public static List<Ep> GetInRange(int serieId, int from, int to)
         {
-            return ConvertToEpsList(StreamLinkDataAccessLayer.EpDA.GetInRange(serieId, from, to));
+            DataTable dt = StreamLinkDataAccessLayer.EpDA.GetInRange(serieId, from, to);
+
+            List<Ep> eps = dt.AsEnumerable()
+                              .Select(row => new Ep(
+                                  row.Field<int>("EpId"),
+                                  row.Field<int>("EpNum"),
+                                  row.Field<int>("SerieId")
+                              ))
+                              .ToList();
+            return eps;
         }
+
 
         // TODO: Give (Create,  Update, Delete) permessions only to admins and mods
         private bool _Add()
@@ -116,16 +104,16 @@ namespace StreamLinkBussinessLayer
         {
             bool isSaved = false;
 
-            switch (EpState)
+            switch (_epState)
             {
-                case enEpState.Creating:
+                case Enums.ObjectState.Creating:
                     if (isSaved = this._Add())
                     {
-                        EpState = enEpState.Editing;
+                        _epState = Enums.ObjectState.Editing;
                     }
                     break;
 
-                case enEpState.Editing:
+                case Enums.ObjectState.Editing:
                     isSaved = this._Update();
                     break;
             }

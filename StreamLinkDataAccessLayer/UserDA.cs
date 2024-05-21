@@ -1,37 +1,36 @@
-﻿using OpenQA.Selenium.DevTools;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
+using System.Data;
 using System.Linq;
-using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using OpenQA.Selenium.DevTools.V122.DOM;
 
 namespace StreamLinkDataAccessLayer
 {
-    public class HostDA
+    public class UserDA
     {
-        public static bool Get(int hostId, ref string hostName, ref string websiteLink)
+        public static bool Get(int userId, ref string username, ref string password, ref int roleId)
         {
             bool isFound = false;
             using (SqlConnection conn = new SqlConnection(DataAccessSettings.ConnectionString))
             {
-                string query = @"SELECT * FROM Host WHERE HostId = @HostId;";
+                string query = @"SELECT * FROM [User] WHERE UserId = @UserId;";
                 SqlCommand cmd = new SqlCommand(query, conn);
 
                 try
                 {
                     conn.Open();
-                    cmd.Parameters.AddWithValue("@HostId", hostId);
+                    cmd.Parameters.AddWithValue("@UserId", userId);
 
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
                         if (isFound = reader.Read())
                         {
-                            hostName = (string)reader["HostName"];
-                            websiteLink = (string)reader["WebsiteLink"];
+                            username = (string)reader["Username"];
+                            password = (string)reader["Password"];
+                            roleId = (int)reader["RoleId"];
                         }
                     }
                 }
@@ -44,21 +43,27 @@ namespace StreamLinkDataAccessLayer
             return isFound;
         }
 
-        public static DataTable GetAll()
+        public static bool Get(ref int userId, string username, ref string password, ref int userPermissions)
         {
-            DataTable dt = new DataTable();
+            bool isFound = false;
             using (SqlConnection conn = new SqlConnection(DataAccessSettings.ConnectionString))
             {
-                string query = @"SELECT * FROM Host";
+                string query = @"SELECT * FROM [User] WHERE Username = @Username;";
                 SqlCommand cmd = new SqlCommand(query, conn);
 
                 try
                 {
                     conn.Open();
+                    cmd.Parameters.AddWithValue("@Username", username);
 
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        dt.Load(reader);
+                        if (isFound = reader.Read())
+                        {
+                            userId = (int)reader["UserId"];
+                            password = (string)reader["Password"];
+                            userPermissions = (int)reader["RoleId"];
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -67,30 +72,31 @@ namespace StreamLinkDataAccessLayer
                 }
             }
 
-            return dt;
+            return isFound;
         }
 
-        public static int Add(string hostName, string websiteLink)
+        public static int Add(string username, string password, int userPermissions)
         {
-            int hostId = -1;
+            int userId = -1;
             using (SqlConnection conn = new SqlConnection(DataAccessSettings.ConnectionString))
             {
-                string query = @"INSERT INTO Host(HostName, WebsiteLink)
-                                 VALUES(@HostName, @WebsiteLink)
+                string query = @"INSERT INTO [User](Username, Password, UserPermissions)
+                                 VALUES(@Username, @Password, @UserPermissions)
                                  SELECT SCOPE_IDENTITY();";
                 SqlCommand cmd = new SqlCommand(query, conn);
 
                 try
                 {
                     conn.Open();
-                    cmd.Parameters.AddWithValue("@HostName", hostName);
-                    cmd.Parameters.AddWithValue("@WebsiteLink", websiteLink);
+                    cmd.Parameters.AddWithValue("@Username", username);
+                    cmd.Parameters.AddWithValue("@Password", password);
+                    cmd.Parameters.AddWithValue("@UserPermissions", userPermissions);
 
                     object insertedRowId = cmd.ExecuteScalar();
 
                     if (insertedRowId != null && int.TryParse(insertedRowId.ToString(), out int result))
                     {
-                        hostId = result;
+                        userId = result;
                     }
                 }
                 catch (Exception ex)
@@ -99,56 +105,31 @@ namespace StreamLinkDataAccessLayer
                 }
             }
 
-            return hostId;
+            return userId;
         }
 
-        public static bool Update(int hostId, string hostName, string websiteLink)
+        public static bool Update(int userId, string username, string password, int userPermissions)
         {
             int rowsAffected = 0;
             using (SqlConnection conn = new SqlConnection(DataAccessSettings.ConnectionString))
             {
-                string query = @"UPDATE Host
-                                 SET HostName = @HostName,
-                                     WebsiteLink = @WebsiteLink,
-                                 WHERE HostId = @HostId;";
+                string query = @"UPDATE User
+                                 SET Username = @Username,
+                                     Password = @Password,
+                                     UserPermissions = @UserPermissions
+                                 WHERE UserId = @UserId;";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
 
                 try
                 {
                     conn.Open();
-                    cmd.Parameters.AddWithValue("@HostId", hostId);
-                    cmd.Parameters.AddWithValue("@HostName", hostName);
-                    cmd.Parameters.AddWithValue("@WebsiteLink", websiteLink);
+                    cmd.Parameters.AddWithValue("@UserId", userId);
+                    cmd.Parameters.AddWithValue("@Username", username);
+                    cmd.Parameters.AddWithValue("@Password", password);
+                    cmd.Parameters.AddWithValue("@UserPermissions", userPermissions);
 
                     rowsAffected = cmd.ExecuteNonQuery();
-
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-            }
-
-            return rowsAffected > 0;
-        }
-
-        public static bool Delete(int hostId)
-        {
-            int rowsAffected = 0;
-            using (SqlConnection conn = new SqlConnection(DataAccessSettings.ConnectionString))
-            {
-                string query = @"DELETE FROM Host WHERE HostId = @HostId;";
-
-                SqlCommand cmd = new SqlCommand(query, conn);
-
-                try
-                {
-                    conn.Open();
-                    cmd.Parameters.AddWithValue("@HostId", hostId);
-
-                    rowsAffected = cmd.ExecuteNonQuery();
-
                 }
                 catch (Exception ex)
                 {
